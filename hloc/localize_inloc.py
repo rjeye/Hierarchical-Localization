@@ -110,7 +110,9 @@ def pose_from_cluster(dataset_dir, q, retrieved, feature_file, match_file, skip=
         "height": height,
         "params": [focal_length, cx, cy],
     }
-    ret = pycolmap.absolute_pose_estimation(all_mkpq, all_mkp3d, cfg, 48.00)
+    ret = pycolmap.absolute_pose_estimation(
+        all_mkpq, all_mkp3d, cfg, estimation_options=dict(ransac=dict(max_error=48.0))
+    )
     ret["cfg"] = cfg
     return ret, all_mkpq, all_mkpr, all_mkp3d, all_indices, num_matches
 
@@ -140,7 +142,10 @@ def main(dataset_dir, retrieval, features, matches, results, skip_matches=None):
             dataset_dir, q, db, feature_file, match_file, skip_matches
         )
 
-        poses[q] = (ret["qvec"], ret["tvec"])
+        # FIX: extract quaternion and translation from the Rigid3D
+        qvec, tvec = ret["cam_from_world"].rotation, ret["cam_from_world"].translation
+
+        poses[q] = (qvec, tvec)
         logs["loc"][q] = {
             "db": db,
             "PnP_ret": ret,
@@ -155,7 +160,7 @@ def main(dataset_dir, retrieval, features, matches, results, skip_matches=None):
     with open(results, "w") as f:
         for q in queries:
             qvec, tvec = poses[q]
-            qvec = " ".join(map(str, qvec))
+            qvec = " ".join(map(str, qvec.quat[[3, 0, 1, 2]]))
             tvec = " ".join(map(str, tvec))
             name = q.split("/")[-1]
             f.write(f"{name} {qvec} {tvec}\n")

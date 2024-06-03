@@ -1,6 +1,7 @@
 torch>=1.1
 torchvision>=0.3
 numpy
+tensorboard # add tensorboard to requirements
 opencv-python
 tqdm>=4.36.0
 matplotlib
