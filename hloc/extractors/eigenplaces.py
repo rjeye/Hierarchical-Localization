@@ -38,6 +38,7 @@ class EigenPlaces(BaseModel):
     required_inputs = ["image"]
 
     def _init(self, conf):
+        torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
         self.net = torch.hub.load(
             "gmberton/" + conf["variant"],
             "get_trained_model",

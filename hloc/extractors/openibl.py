@@ -11,6 +11,7 @@ class OpenIBL(BaseModel):
     required_inputs = ["image"]
 
     def _init(self, conf):
+        torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
         self.net = torch.hub.load(
             "yxgeee/OpenIBL", conf["model_name"], pretrained=True
         ).eval()
