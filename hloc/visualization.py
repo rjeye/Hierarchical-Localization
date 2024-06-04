@@ -5,8 +5,15 @@ import numpy as np
 import pycolmap
 from matplotlib import cm
 
-from .utils.io import read_image
-from .utils.viz import add_text, cm_RdGn, plot_images, plot_keypoints, plot_matches
+from .utils.io import read_image, get_keypoints, get_matches
+from .utils.viz import (
+    add_text,
+    cm_RdGn,
+    plot_images,
+    plot_keypoints,
+    plot_matches,
+    save_plot,
+)
 
 
 def visualize_sfm_2d(
@@ -31,9 +38,11 @@ def visualize_sfm_2d(
         elif color_by == "track_length":
             tl = np.array(
                 [
-                    reconstruction.points3D[p.point3D_id].track.length()
-                    if p.has_point3D()
-                    else 1
+                    (
+                        reconstruction.points3D[p.point3D_id].track.length()
+                        if p.has_point3D()
+                        else 1
+                    )
                     for p in image.points2D
                 ]
             )
@@ -161,3 +170,39 @@ def visualize_loc_from_log(
         opts = dict(pos=(0.01, 0.01), fs=5, lcolor=None, va="bottom")
         add_text(0, query_name, **opts)
         add_text(1, db_name, **opts)
+
+
+def visualize_matches(
+    image_dir,
+    query_name,
+    ref_name,
+    features_path,
+    matches_path,
+    dpi=75,
+    grayscale=False,
+    save_path=None,
+):
+    query_image = read_image(image_dir / query_name, grayscale=grayscale)
+    ref_image = read_image(image_dir / ref_name, grayscale=grayscale)
+
+    keypoints_query = get_keypoints(features_path, query_name)
+    keypoints_ref = get_keypoints(features_path, ref_name)
+
+    matches, scores = get_matches(matches_path, query_name, ref_name)
+
+    kpts0 = keypoints_query[matches[:, 0]]
+    kpts1 = keypoints_ref[matches[:, 1]]
+
+    # color by matching score
+    color = cm_RdGn(scores).tolist()
+
+    plot_images([query_image, ref_image], dpi=dpi)
+    plot_matches(kpts0, kpts1, color, lw=2, ps=8, indices=(0, 1), a=0.3)
+    add_text(
+        0, "Query: " + query_name, pos=(0.01, 0.01), fs=15, lcolor=None, va="bottom"
+    )
+    add_text(
+        1, "Reference: " + ref_name, pos=(0.01, 0.01), fs=15, lcolor=None, va="bottom"
+    )
+    if save_path not in [None, ""]:
+        save_plot(save_path)
