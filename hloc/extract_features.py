@@ -135,6 +135,68 @@ confs = {
         "model": {"name": "eigenplaces"},
         "preprocessing": {"resize_max": 1024},
     },
+    "eigenplaces_indoor_0510": {
+        "output": "global-feats-eigenplaces-indoor-0510",
+        "model": {
+            "name": "eigenplaces_indoor",
+            "variant": "eigenplaces",
+            "backbone": "ResNet50",
+            "fc_output_dim": 2048,
+            "variation": "GB1_BAI_5_10",
+        },
+        "preprocessing": {"resize_max": 1024},
+    },
+    "eigenplaces_indoor_1025": {
+        "output": "global-feats-eigenplaces-indoor-1025",
+        "model": {
+            "name": "eigenplaces_indoor",
+            "variant": "eigenplaces",
+            "backbone": "ResNet50",
+            "fc_output_dim": 2048,
+            "variation": "GB1_BAI_10_25_S",
+        },
+        "preprocessing": {"resize_max": 1024},
+    },
+    "salad_indoor_GB1": {
+        "output": "global-feats-salad-indoor-GB1",
+        "model": {
+            "name": "salad_indoor",
+            "variant": "salad",
+            "backbone": "Dinov2",
+            "fc_output_dim": 8448,
+            "variation": "GB1_10_25",
+        },
+        "preprocessing": {"resize_max": 1024},
+    },
+    "salad_indoor_HB1GB1": {
+        "output": "global-feats-salad-indoor-HB1GB1",
+        "model": {
+            "name": "salad_indoor",
+            "variant": "salad",
+            "backbone": "Dinov2",
+            "fc_output_dim": 8448,
+            "variation": "HB1_GB1_2_5",
+        },
+        "preprocessing": {"resize_max": 1024},
+    },
+    "salad_indoor_GB1": {
+        "output": "global-feats-salad-indoor-GB1",
+        "model": {
+            "name": "salad_indoor",
+            "variant": "salad",
+            "backbone": "Dinov2",
+            "fc_output_dim": 8448,
+            "variation": "GB1_10_25",
+        },
+        "preprocessing": {"resize_max": 1024},
+    },
+    "salad": {
+        "output": "global-feats-salad-indoor-HB1GB1",
+        "model": {
+            "name": "salad",
+        },
+        "preprocessing": {"resize_max": 1024},
+    },
 }
 
 
